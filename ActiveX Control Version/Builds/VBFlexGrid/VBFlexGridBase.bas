@@ -73,10 +73,10 @@ Private Const WM_CREATE As Long = &H1
 Private Const WM_DESTROY As Long = &H2
 Private Const WM_NCDESTROY As Long = &H82
 Private Const WM_UAHDESTROYWINDOW As Long = &H90
-Private Const CS_VREDRAW As Long = &H1, CS_HREDRAW As Long = &H2
 Private Const CS_DBLCLKS As Long = &H8
 Private Const IDC_ARROW As Long = 32512
 Private ShellModHandle As Long, ShellModCount As Long
+Private FlexSubclassProcPtr As Long
 Private FlexClassAtom As Integer, FlexRefCount As Long
 Private FlexSplitterBrush As Long
 
@@ -121,37 +121,15 @@ End If
 FlexW2KCompatibility = Value
 End Function
 
-Public Sub FlexTopParentValidateControls(ByVal UserControl As Object)
-With GetTopUserControl(UserControl)
-If TypeOf .Parent Is VB.MDIForm Then
-    Dim MDIForm As VB.MDIForm
-    Set MDIForm = .Parent
-    MDIForm.ValidateControls
-ElseIf TypeOf .Parent Is VB.Form Then
-    Dim Form As VB.Form
-    Set Form = .Parent
-    Form.ValidateControls
-Else
-    Const IID_IPropertyPage As String = "{B196B28D-BAB4-101A-B69C-00AA00341D07}"
-    If VTableInterfaceSupported(.Parent, IID_IPropertyPage) = True Then
-        Dim PropertyPage As VB.PropertyPage, TempPropertyPage As VB.PropertyPage
-        CopyMemory TempPropertyPage, ObjPtr(.Parent), 4
-        Set PropertyPage = TempPropertyPage
-        CopyMemory TempPropertyPage, 0&, 4
-        PropertyPage.ValidateControls
-    End If
-End If
-End With
-End Sub
-
 Public Sub FlexSetSubclass(ByVal hWnd As Long, ByVal This As VBFlexGrid, ByVal dwRefData As Long, Optional ByVal Name As String)
 If hWnd = 0 Then Exit Sub
-If Name = vbNullString Then Name = "VBFlexGrid"
+If Name = vbNullString Then Name = "Flex"
 If GetProp(hWnd, StrPtr(Name & "SubclassInit")) = 0 Then
+    If FlexSubclassProcPtr = 0 Then FlexSubclassProcPtr = ProcPtr(AddressOf FlexSubclassProc)
     If FlexW2KCompatibility() = False Then
-        SetWindowSubclass hWnd, AddressOf FlexSubclassProc, ObjPtr(This), dwRefData
+        SetWindowSubclass hWnd, FlexSubclassProcPtr, ObjPtr(This), dwRefData
     Else
-        SetWindowSubclass_W2K hWnd, AddressOf FlexSubclassProc, ObjPtr(This), dwRefData
+        SetWindowSubclass_W2K hWnd, FlexSubclassProcPtr, ObjPtr(This), dwRefData
     End If
     SetProp hWnd, StrPtr(Name & "SubclassID"), ObjPtr(This)
     SetProp hWnd, StrPtr(Name & "SubclassInit"), 1
@@ -168,12 +146,12 @@ End Function
 
 Public Sub FlexRemoveSubclass(ByVal hWnd As Long, Optional ByVal Name As String)
 If hWnd = 0 Then Exit Sub
-If Name = vbNullString Then Name = "VBFlexGrid"
+If Name = vbNullString Then Name = "Flex"
 If GetProp(hWnd, StrPtr(Name & "SubclassInit")) = 1 Then
     If FlexW2KCompatibility() = False Then
-        RemoveWindowSubclass hWnd, AddressOf FlexSubclassProc, GetProp(hWnd, StrPtr(Name & "SubclassID"))
+        RemoveWindowSubclass hWnd, FlexSubclassProcPtr, GetProp(hWnd, StrPtr(Name & "SubclassID"))
     Else
-        RemoveWindowSubclass_W2K hWnd, AddressOf FlexSubclassProc, GetProp(hWnd, StrPtr(Name & "SubclassID"))
+        RemoveWindowSubclass_W2K hWnd, FlexSubclassProcPtr, GetProp(hWnd, StrPtr(Name & "SubclassID"))
     End If
     RemoveProp hWnd, StrPtr(Name & "SubclassID")
     RemoveProp hWnd, StrPtr(Name & "SubclassInit")
@@ -188,9 +166,9 @@ Select Case wMsg
     Case WM_NCDESTROY, WM_UAHDESTROYWINDOW
         FlexSubclassProc = FlexDefaultProc(hWnd, wMsg, wParam, lParam)
         If FlexW2KCompatibility() = False Then
-            RemoveWindowSubclass hWnd, AddressOf VBFlexGridBase.FlexSubclassProc, uIdSubclass
+            RemoveWindowSubclass hWnd, FlexSubclassProcPtr, uIdSubclass
         Else
-            RemoveWindowSubclass_W2K hWnd, AddressOf VBFlexGridBase.FlexSubclassProc, uIdSubclass
+            RemoveWindowSubclass_W2K hWnd, FlexSubclassProcPtr, uIdSubclass
         End If
         Exit Function
 End Select
@@ -210,7 +188,8 @@ If (FlexClassAtom Or FlexRefCount) = 0 Then
     ClassName = "VBFlexGridWndClass"
     With WCEX
     .cbSize = LenB(WCEX)
-    .dwStyle = CS_VREDRAW Or CS_HREDRAW Or CS_DBLCLKS
+    ' CS_VREDRAW and CS_HREDRAW will not be specified as entire redraw upon resize is not necessary.
+    .dwStyle = CS_DBLCLKS
     .lpfnWndProc = ProcPtr(AddressOf FlexWindowProc)
     .cbWndExtra = 4
     .hInstance = App.hInstance

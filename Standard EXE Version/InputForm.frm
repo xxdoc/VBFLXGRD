@@ -95,7 +95,7 @@ Result = PropResult
 End Property
 
 Private Sub Form_Load()
-Call SetupVisualStyles(Me)
+Call SetupVisualStylesFixes(Me)
 Label1.Caption = PropPrompt
 If PropSearchMode = True Then
     Text2.Visible = True

@@ -1,5 +1,61 @@
 List of revisions:
 
+13-May-2020
+- Performance boost for drawing custom cell background colors.
+
+11-May-2020
+- CS_VREDRAW and CS_HREDRAW are not specified anymore as entire redraw upon resize is not necessary.
+
+10-May-2020
+- Performance boost for drawing the grid.
+  - ~2% for using of Polyline API (not PolylineTo !) instead of MoveToEx and LineTo. (for the grid lines)
+    Polyline is at device driver level, thus faster than LineTo and it doesn't change current position.
+  - ~1% for using of PatBlt API instead of FillRect. (FillRect is a wrapper of PatBlt SelectObject'ing the specified Brush)
+  - ~5% by preserving the memory bitmap (DoubleBuffer) for WM_PAINT and re-create only upon WM_SIZE.
+
+26-Apr-2020
+- Bugfix in the GetClipboardText function in Common.bas.
+
+19-Apr-2020
+- Internal improvement in VBFlexGridBase.bas.
+
+15-Apr-2020
+- Modified OLEGuids.tlb as following: (compiled with same uuid)
+  - included hWnd param for IOleInPlaceActiveObjectVB and IOleControlVB
+  Unregister to old OLEGuids.tlb is not necessary, just overwrite the file.
+- Returning a zero KeyChar in the EditKeyPress event will not cause anymore a beep. (like in a TextBox control)
+
+09-Apr-2020
+- Bugfix in the CellPicture property. It now returns as 'IPictureDisp' instead of 'IPicture'.
+
+07-Apr-2020
+- Major internal improvement as no WM_MOUSEACTIVATE overhead necessary anymore.
+  This results for 'FlexTopParentValidateControls' being obselete and was removed!
+
+31-Mar-2020
+- Bugfix in the internal MoveNextRow and MoveNextCol function.
+
+22-Mar-2020
+- Bugfix in the CreateGDIFontFromOLEFont function. (Common.bas)
+
+24-Feb-2020
+- Bugfix in the ShowLabelTips property that it didn't show on fixed cells.
+
+06-Feb-2020
+- Improvement (cosmetic, not a bug) in VTableHandle.bas so that IOleControl do not disturb anymore in IDE on debugging.
+  This affects only the Std-EXE version (not OCX) and only when setting breakpoints. (F9, F8 etc.)
+
+05-Jan-2020
+- Improvement in VTableHandle.bas as IPerPropertyBrowsing must NOT be subclassed anymore.
+  No VTable remains subclassed, therefore VTableSubclass.cls got obselete and was removed!
+- Modified OLEGuids.tlb as following: (compiled with same uuid)
+  - bugfix interface IPerPropertyBrowsing.
+  Unregister to old OLEGuids.tlb is not necessary, just overwrite the file.
+
+03-Jan-2020
+- Improvement in VTableHandle.bas as IOleControl must NOT be subclassed anymore.
+  It is necessary to replace also all controls. (.ctl)
+
 23-Dec-2019
 - Major performance boost for the 'DataSource' property. (ADO's GetRows method now used)
 
