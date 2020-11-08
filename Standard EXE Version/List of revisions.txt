@@ -1,5 +1,26 @@
 List of revisions:
 
+11-Aug-2020
+- Bugfix in the ForeColorFixed property.
+
+09-Aug-2020
+- OCX supports accelerator keys in a VBA environment.
+
+02-Aug-2020
+- Internal function ComboShowDropDown will call RefreshMousePointer function when current hCursor is NULL.
+
+05-Jul-2020
+- The ellipsis on a ComboButton can now drawn with COLOR_HOTLIGHT when mouse is over it.
+  This only affects when visual styles are off.
+
+28-May-2020
+- WM_UNICHAR handler now supports surrogate pairs. (UTF32 conversion)
+
+26-May-2020
+- Massive performance boost for Get .Clip property.
+  The string concatenation was done by using small buffer chunks putting together.
+  Now the VB6 poor man's string builder is used from wqweto. (but using a string array instead of a collection)
+
 13-May-2020
 - Performance boost for drawing custom cell background colors.
 
