@@ -2,8 +2,8 @@ VERSION 5.00
 Begin VB.Form UserEditingForm 
    Caption         =   "CellEditing Demo"
    ClientHeight    =   6900
-   ClientLeft      =   120
-   ClientTop       =   450
+   ClientLeft      =   225
+   ClientTop       =   570
    ClientWidth     =   13830
    ScaleHeight     =   6900
    ScaleWidth      =   13830
@@ -272,7 +272,11 @@ End Sub
 Private Sub VBFlexGrid1_Validate(Cancel As Boolean)
 ' This must be handled when validation of the edit control should be for the whole form.
 If Option1.Value = True Then
-    If VBFlexGrid1.hWndEdit <> 0 Then Call VBFlexGrid1_ValidateEdit(Cancel)
+    If VBFlexGrid1.hWndEdit <> 0 Then ' Check if editing is active.
+        ' Try to commit. The method 'CommitEdit' will fire the ValidateEdit event.
+        ' Doing this way will prevent double validation in case a MsgBox is shown in the ValidateEdit event.
+        Cancel = Not VBFlexGrid1.CommitEdit() ' Call VBFlexGrid1_ValidateEdit(Cancel)
+    End If
 End If
 End Sub
 

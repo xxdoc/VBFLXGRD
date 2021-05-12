@@ -1,5 +1,56 @@
 List of revisions:
 
+03-May-2021
+- Revision update. (Version 1.4.44)
+
+26-Mar-2021
+- Revision update. (Version 1.4.43)
+
+17-Mar-2021
+- Revision update. (Version 1.4.42)
+
+08-Mar-2021
+- Revision update. (Version 1.4.41)
+
+06-Mar-2021
+- Revision update. (Version 1.4.40)
+
+05-Mar-2021
+- Revision update. (Version 1.4.39)
+
+02-Mar-2021
+- Revision update. (Version 1.4.38)
+
+01-Mar-2021
+- Revision update. (Version 1.4.37)
+
+28-Feb-2021
+- Revision update. (Version 1.4.36)
+
+27-Feb-2021
+- Revision update. (Version 1.4.35)
+
+27-Feb-2021
+- Revision update. (Version 1.4.34)
+
+25-Feb-2021
+- Revision update. (Version 1.4.33)
+
+26-Jan-2021
+- Revision update. (Version 1.4.32)
+
+26-Jan-2021
+- Revision update. (Version 1.4.31)
+
+17-Nov-2020
+- Revision update. (Version 1.4.30)
+
+14-Nov-2020
+- Revision update. (Version 1.4.29)
+
+13-Nov-2020
+- Revision update. (Version 1.4.28)
+
 14-Aug-2020
 - Revision update. (Version 1.4.27)
 
